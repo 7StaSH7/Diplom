@@ -1,4 +1,4 @@
-```api.news-stash.students.nomoreparties.co``` -- API для работы с статьями и пользователями
+```https://www.api.news-stash.tk/``` -- API для работы с статьями и пользователями
 
 ***Реализовано***:
 
