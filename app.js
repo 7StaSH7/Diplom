@@ -13,8 +13,11 @@ const errorHandler = require('./errors/error-handler');
 
 const {
   PORT = 3000,
+  NODE_ENV,
   MONGO_DB,
 } = process.env;
+
+const mongoUrl = NODE_ENV === 'production' ? MONGO_DB : 'mongodb://localhost:27017/diplom';
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const routes = require('./routes');
@@ -25,7 +28,7 @@ const limiter = rateLimit({
   max: 100,
 });
 
-mongoose.connect(MONGO_DB, {
+mongoose.connect(mongoUrl, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
