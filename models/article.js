@@ -3,6 +3,10 @@ const validator = require('validator');
 
 const NotFoundError = require('../errors/not-found-err');
 const NotEnoughRightsError = require('../errors/not-enough-rights-err');
+const {
+  articleNotFoundMessage,
+  notEnoughRightsMassage,
+} = require('../errors/error-messages');
 
 const articleSchema = new mongoose.Schema({
   keyword: {
@@ -53,19 +57,18 @@ const articleSchema = new mongoose.Schema({
   },
 });
 
-// eslint-disable-next-line func-names
 articleSchema.statics.removeIfOwner = function (owner, articleId) {
   return this.findById(articleId).select('+owner')
     .then((article) => {
       if (!article) {
-        return Promise.reject(new NotFoundError('Статья не найдена'));
+        return Promise.reject(new NotFoundError(articleNotFoundMessage));
       }
 
       if (article.owner._id.toString() === owner) {
         return article.remove();
       }
 
-      return Promise.reject(new NotEnoughRightsError('Недостаточно прав'));
+      return Promise.reject(new NotEnoughRightsError(notEnoughRightsMassage));
     });
 };
 

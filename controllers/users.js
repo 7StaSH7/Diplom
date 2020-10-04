@@ -27,10 +27,10 @@ module.exports.createUser = (req, res, next) => {
         }))
         .catch((err) => {
           if (err.name === 'MongoError') next(new ConflictError('Пользователь с такими данными уже существует'));
-          next(new BadRequestError(`Произошла ошибка при создании пользователя - ${err.message}`));
+          else throw new BadRequestError(`Произошла ошибка при создании пользователя - ${err.message}`);
         });
     })
-    .catch(() => next(new ServerError('Произошла ошибка при создании пользователя')));
+    .catch((err) => next(new BadRequestError(`Произошла ошибка при создании пользователя - ${err.message}`)));
 };
 
 module.exports.getSpecificUser = (req, res, next) => {

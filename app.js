@@ -9,24 +9,16 @@ const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const rateLimit = require('express-rate-limit');
 const NotFoundError = require('./errors/not-found-err');
-const errorHandler = require('./errors/error-handler');
+const { notFoundMessage } = require('./errors/error-messages');
+const errorHandler = require('./middlewares/error-handler');
 
-const {
-  PORT = 3000,
-  NODE_ENV,
-  MONGO_DB,
-} = process.env;
-
-const mongoUrl = NODE_ENV === 'production' ? MONGO_DB : 'mongodb://localhost:27017/diplom';
+const { appPort, mongoUrl } = require('./config');
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const routes = require('./routes');
 
 const app = express();
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-});
+const limiter = require('./middlewares/rate-limiter');
 
 mongoose.connect(mongoUrl, {
   useNewUrlParser: true,
@@ -47,12 +39,12 @@ app.use(requestLogger);
 app.use('/', routes);
 
 app.use('*', (req, res, next) => {
-  next(new NotFoundError('Ресурс не найден'));
+  next(new NotFoundError(notFoundMessage));
 });
 
 app.use(errorLogger);
-app.use(errorHandler);
 app.use(errors());
+app.use(errorHandler);
 
 
-app.listen(PORT);
+app.listen(appPort);
