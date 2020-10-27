@@ -11,7 +11,7 @@ const rateLimit = require('express-rate-limit');
 const NotFoundError = require('./errors/not-found-err');
 const { notFoundMessage } = require('./errors/error-messages');
 const errorHandler = require('./middlewares/error-handler');
-
+const cors = require('./middlewares/cors');
 const { appPort, mongoUrl } = require('./config');
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -29,6 +29,7 @@ mongoose.connect(mongoUrl, {
 
 app.use(express.static(path.join(__dirname, '/public')));
 
+app.use(cors);
 app.use(limiter);
 app.use(helmet());
 app.use(cookieParser());
